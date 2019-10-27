@@ -32,7 +32,13 @@ public class CarService {
      * @return a list of all vehicles in the CarRepository
      */
     public List<Car> list() {
-        return repository.findAll();
+        List<Car> cars =  repository.findAll();
+        cars.forEach(car -> {
+                    Long carID = car.getId();
+                    car.setPrice(priceClient.getPrice(carID));
+                    car.setLocation(mapsClient.getAddress(car.getLocation()));
+                });
+        return cars;
     }
 
     /**
@@ -55,7 +61,6 @@ public class CarService {
      * @return the new/updated car is stored in the repository
      */
     public Car save(Car car) {
-        System.out.println(car.getLocation().getLat());
         if (car.getId() != null) {
             return repository.findById(car.getId())
                     .map(carToBeUpdated -> {
@@ -64,7 +69,6 @@ public class CarService {
                         return repository.save(carToBeUpdated);
                     }).orElseThrow(CarNotFoundException::new);
         }
-
         return repository.save(car);
     }
 
