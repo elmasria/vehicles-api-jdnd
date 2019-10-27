@@ -87,6 +87,35 @@ public class CarControllerTest {
     }
 
     /**
+     * Tests for successful creation of new car in the system
+     * @throws Exception when car creation fails in the system
+     */
+    @Test
+    public void updateCar() throws Exception {
+        Car car = getCar();
+        Details details = new Details();
+        Manufacturer manufacturer = new Manufacturer(101, "Chevrolet");
+        details.setManufacturer(manufacturer);
+        details.setModel("Impala");
+        details.setMileage(32281);
+        details.setExternalColor("blue");
+        details.setBody("sedan");
+        details.setEngine("3.6L V6");
+        details.setFuelType("Gasoline");
+        details.setModelYear(2019);
+        details.setProductionYear(2019);
+        details.setNumberOfDoors(5);
+        car.setDetails(details);
+        mvc.perform(
+                put(new URI("/cars/1"))
+                        .content(json.write(car).getJson())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.details.externalColor").value("blue"));
+    }
+
+    /**
      * Tests if the read operation appropriately returns a list of vehicles.
      * @throws Exception if the read operation of the vehicle list fails
      */
